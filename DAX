@@ -1,0 +1,32 @@
+/* Find the Average Sales per customer and compare the total sales for each customer, flag high if the customer sales is higher than the average sales, else low*/
+
+--Find the Total Sales
+Assignment Total Sales = 
+VAR Sum_of_sales = 
+CALCULATE(SUMX(
+    RELATEDTABLE(
+        'Sales by Store'),
+    'Sales by Store'[quantity_sold]*'Sales by Store'[unit_price]),ALL('Sales by Store'))
+
+--Find the Total Customers
+VAR total_customers = 
+CALCULATE(
+    COUNTROWS('Customer Lookup'),
+    ALL('Customer Lookup'))
+
+--Find the Average Sales
+VAR avg_Sales = 
+DIVIDE(Sum_of_sales,total_customers) 
+
+--Using related table, calculate the total sales for each customers from sales table
+Var Customerwisesales=
+sumx(
+    RELATEDTABLE('Sales by Store'),
+    'Sales by Store'[quantity_sold]*'Sales by Store'[unit_price])
+    
+--Simple If condition to know if the sales of the customer is higher or lower than the average sales
+VAR HighLow = 
+IF(Customerwisesales>avg_Sales, "High","Low")
+
+--Return the flag
+Return HighLow
